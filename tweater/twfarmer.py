@@ -1,11 +1,17 @@
 # -*- coding: utf-8 -*-
 import requests
-from tworder import TwOrder as order
+from .tworder import TwOrder as order
 
 
 class TwFarmer:
     @staticmethod
     def ripStatusPage(cursor, sess):
+        """
+
+        :param cursor: 附加到 max_position 后的字符串
+        :param sess: requests session
+        :return:
+        """
         url = "https://twitter.com/i/search/timeline?f=tweets&q=%s&src=typd&l=en&max_position=%s"
         parUrl = ''
         if 'user' not in order.conf and 'query' not in order.conf:
@@ -30,12 +36,11 @@ class TwFarmer:
             'X-Requested-With': "XMLHttpRequest"
         }
         try:
-            # print unicode(url).encode('utf8')
-            r = sess.get(url.encode('utf-8'), headers=headers)
+            r = sess.get(url, headers=headers)
             return r.json()
         except requests.exceptions.RequestException as e:
-            print 'url: ', url
-            print e
+            print(f'url: {url}')
+            print(e)
 
     @staticmethod
     def ripCommentPage(user_name, tweet_id, cursor, sess):
@@ -50,5 +55,5 @@ class TwFarmer:
             r = sess.get(url, headers=headers)
             return r.json()
         except requests.exceptions.RequestException as e:
-            print 'url: ', url
-            print e
+            print(f'url: {url}')
+            print(e)

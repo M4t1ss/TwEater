@@ -1,14 +1,22 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 from pyquery import PyQuery
-from twfarmer import TwFarmer
-from tworder import TwOrder as order
+from .twfarmer import TwFarmer
+from .tworder import TwOrder as order
 import time
 
 
 class TwChef:
     @staticmethod
     def cookPage(page, session, isComment=False):
+        """
+
+        :param page:页面
+        :param session: requests的session
+        :param isComment:
+        :return:
+        """
+
         cursor = ''
         items = []
         # cnt_cp: Number of comments implies by this page
@@ -16,6 +24,7 @@ class TwChef:
         # that means cnt_cp = 0
         cnt_cp = 0
         has_more = False
+
         if 'items_html' in page and len(page['items_html'].strip()) == 0:
             return cnt_cp, has_more, cursor, items
         has_more = page['has_more_items']
@@ -65,10 +74,10 @@ class TwChef:
                 textUrl = PyQuery(link).attr('data-expanded-url')
                 textHashtag = PyQuery(link)('a.twitter-hashtag')('b')
                 if len(textHashtag) > 0:
-                    hashtags.append('#' + textHashtag.text().encode('utf-8'))
+                    hashtags.append('#' + textHashtag.text())
                 textMention = PyQuery(link)('a.twitter-atreply')('b')
                 if len(textMention) > 0:
-                    mentions.append('@' + PyQuery(textMention).text().encode('utf-8'))
+                    mentions.append('@' + PyQuery(textMention).text())
             twe['textUrl'] = ''
             if textUrl is not None:
                 twe['textUrl'] = textUrl
@@ -83,16 +92,16 @@ class TwChef:
                 textEmoji = PyQuery(emo)
                 if textEmoji is not None:
                     emoji = {}
-                    emoji['face'] = textEmoji.attr('alt').encode('utf-8')
-                    emoji['url'] = textEmoji.attr('src').encode('utf-8')
-                    emoji['title'] = textEmoji.attr('title').encode('utf-8')
+                    emoji['face'] = textEmoji.attr('alt')
+                    emoji['url'] = textEmoji.attr('src')
+                    emoji['title'] = textEmoji.attr('title')
                     emojilist.append(emoji)
         twe['emojis'] = emojilist
 
         # Process Text in a tweet Div
         textq = textdiv.remove('a').remove('img')
         if textq is not None:
-            twe["text"] = textq.text().encode('utf-8')
+            twe["text"] = textq.text()
 
         # Process optional Geo area of a tweet
         twe["geo"] = ''
@@ -124,9 +133,11 @@ class TwChef:
             lim = cnt_replies
         while has_more is True and total < lim:
             page = TwFarmer.ripCommentPage(user_name, tweet_id, cursor, session)
+            if not page:
+                continue
             cnt_cp, has_more, cursor, pageTweets = TwChef.cookPage(page, session, isComment=True)
             if len(pageTweets) == 0:
-                print 'Weird, no comments!'
+                print('Weird, no comments!')
                 break
             comments.extend(pageTweets)
             total += len(pageTweets)

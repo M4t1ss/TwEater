@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 import json
 import sys
+import os
 
-
+# 配置
 class TwOrder:
     # Default Values
     conf = {
@@ -46,5 +47,5 @@ class TwOrder:
                     TwOrder.conf['within'] = kwargs['within']
                 
         if len(TwOrder.conf['query']) == 0 and len(TwOrder.conf['user']) == 0:
-            print "Parameter query and user cannot be empty simutaneously!\nUsage: TwOrder(query=\"Father's Day\")"
+            print("Parameter query and user cannot be empty simutaneously!\nUsage: TwOrder(query=\"Father's Day\")")
             sys.exit(1)

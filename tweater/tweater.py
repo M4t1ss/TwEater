@@ -1,13 +1,20 @@
 # -*- coding: utf-8 -*-
 import requests
-from tworder import TwOrder as order
-from twchef import TwChef
-from twfarmer import TwFarmer
+
+from .twchef import TwChef
+from .twfarmer import TwFarmer
+from .tworder import TwOrder as order
 
 
 class TwEater:
     @staticmethod
     def eatTweets(digester, bpargs):
+        """
+
+        :param digester: 保存回调方法
+        :param bpargs: 保存回调参数
+        :return:
+        """
         # Set default values of parameters.
         max_tweets = 1
         bufferlength = 100
@@ -25,13 +32,15 @@ class TwEater:
         cnt_blank = 0
         while total < max_tweets:
             page = TwFarmer.ripStatusPage(cursor, sess)
+            if not page:
+                continue
             cnt_c, has_more, cursor, page_tweets = TwChef.cookPage(page, isComment=False, session=sess)
             if len(page_tweets) == 0:
                 cnt_blank += 1
             if len(page_tweets) > 0:
                 cnt_blank = 0
             if cnt_blank > 3:
-                print 'Too many blank pages, terminating this search.'
+                print('Too many blank pages, terminating this search.')
                 break
             total += len(page_tweets)
             buffer_tweets.extend(page_tweets)
@@ -40,13 +49,15 @@ class TwEater:
             if bufferTotal >= bufferlength:
                 bufferall += bufferTotal
                 digester(buffer_tweets, bpargs)
-                print ' Total tweets: ' + str(total) + ', this time tweets: ' + str(len(buffer_tweets)) + '.\n Total items: ' + str(bufferall) + ', this time items: ' + str(bufferTotal) + '.\n'
+                print(
+                    f'Total tweets:{str(total)}, this time tweets: {str(len(buffer_tweets))}.\n Total items: {str(bufferall)},this time items: {str(bufferTotal) }。\n')
                 buffer_tweets = []
                 bufferTotal = 0
         if bufferTotal > 0:
             bufferall += bufferTotal
             digester(buffer_tweets, bpargs)
-            print ' Total tweets: ' + str(total) + ', this time tweets: ' + str(len(buffer_tweets)) + '.\n Total items: ' + str(bufferall) + ', this time items: ' + str(bufferTotal) + '.\n'
+            print(
+                f'Total tweets: {str(total)}, this time tweets: {str(len(buffer_tweets))}.\n Total items: {str(bufferall)} , this time items:{str(bufferTotal)} .\n')
             buffer_tweets = []
             buffer_tweets = []
             bufferTotal = 0
