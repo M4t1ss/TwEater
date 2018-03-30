@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
+import logging
+
 import requests
+
 from .tworder import TwOrder as order
+
+_log_ = logging.getLogger()
 
 
 class TwFarmer:
@@ -39,8 +44,8 @@ class TwFarmer:
             r = sess.get(url, headers=headers)
             return r.json()
         except requests.exceptions.RequestException as e:
-            print(f'url: {url}')
-            print(e)
+            _log_.error(f'url: {url}')
+            _log_.error(e)
 
     @staticmethod
     def ripCommentPage(user_name, tweet_id, cursor, sess):
@@ -55,5 +60,5 @@ class TwFarmer:
             r = sess.get(url, headers=headers)
             return r.json()
         except requests.exceptions.RequestException as e:
-            print(f'url: {url}')
-            print(e)
+            _log_.error(f'url: {url}')
+            _log_.error(e)

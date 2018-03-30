@@ -1,9 +1,14 @@
 # -*- coding: utf-8 -*-
+import logging
+import time
 from datetime import datetime
+
 from pyquery import PyQuery
+
 from .twfarmer import TwFarmer
 from .tworder import TwOrder as order
-import time
+
+_log_ = logging.getLogger()
 
 
 class TwChef:
@@ -54,9 +59,12 @@ class TwChef:
         twe["user"] = tweetq.attr("data-screen-name")
 
         # Process attributes of a tweet div
-        twe["replies"] = int(tweetq("span.ProfileTweet-action--reply span.ProfileTweet-actionCount").attr("data-tweet-stat-count").replace(",", ""))
-        twe["retweets"] = int(tweetq("span.ProfileTweet-action--retweet span.ProfileTweet-actionCount").attr("data-tweet-stat-count").replace(",", ""))
-        twe["favorites"] = int(tweetq("span.ProfileTweet-action--favorite span.ProfileTweet-actionCount").attr("data-tweet-stat-count").replace(",", ""))
+        twe["replies"] = int(tweetq("span.ProfileTweet-action--reply span.ProfileTweet-actionCount").attr(
+            "data-tweet-stat-count").replace(",", ""))
+        twe["retweets"] = int(tweetq("span.ProfileTweet-action--retweet span.ProfileTweet-actionCount").attr(
+            "data-tweet-stat-count").replace(",", ""))
+        twe["favorites"] = int(tweetq("span.ProfileTweet-action--favorite span.ProfileTweet-actionCount").attr(
+            "data-tweet-stat-count").replace(",", ""))
         twe['timestamp'] = int(tweetq("small.time span.js-short-timestamp").attr("data-time"))
         twe["date"] = datetime.fromtimestamp(twe['timestamp']).strftime("%Y-%m-%d %H:%M")
         twe["id"] = tweetq.attr("data-tweet-id")
@@ -137,7 +145,7 @@ class TwChef:
                 continue
             cnt_cp, has_more, cursor, pageTweets = TwChef.cookPage(page, session, isComment=True)
             if len(pageTweets) == 0:
-                print('Weird, no comments!')
+                _log_.info('Weird, no comments!')
                 break
             comments.extend(pageTweets)
             total += len(pageTweets)

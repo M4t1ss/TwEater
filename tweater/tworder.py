@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 import json
+import logging
 import sys
-import os
+
+_log_ = logging.getLogger()
+
 
 # 配置
 class TwOrder:
@@ -45,7 +48,8 @@ class TwOrder:
                 TwOrder.conf['near'] = kwargs['near']
                 if 'within' in kwargs:
                     TwOrder.conf['within'] = kwargs['within']
-                
+
         if len(TwOrder.conf['query']) == 0 and len(TwOrder.conf['user']) == 0:
-            print("Parameter query and user cannot be empty simutaneously!\nUsage: TwOrder(query=\"Father's Day\")")
+            _log_.error(
+                "Parameter query and user cannot be empty simutaneously!\nUsage: TwOrder(query=\"Father's Day\")")
             sys.exit(1)

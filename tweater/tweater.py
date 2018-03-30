@@ -1,14 +1,18 @@
 # -*- coding: utf-8 -*-
+import logging
+
 import requests
 
 from .twchef import TwChef
 from .twfarmer import TwFarmer
 from .tworder import TwOrder as order
 
+_log_ = logging.getLogger()
+
 
 class TwEater:
     @staticmethod
-    def eatTweets(digester, bpargs):
+    def eatTweets(digester):
         """
 
         :param digester: 保存回调方法
@@ -40,7 +44,7 @@ class TwEater:
             if len(page_tweets) > 0:
                 cnt_blank = 0
             if cnt_blank > 3:
-                print('Too many blank pages, terminating this search.')
+                _log_.info('Too many blank pages, terminating this search.')
                 break
             total += len(page_tweets)
             buffer_tweets.extend(page_tweets)
@@ -48,15 +52,15 @@ class TwEater:
             bufferTotal += cnt_c + len(page_tweets)
             if bufferTotal >= bufferlength:
                 bufferall += bufferTotal
-                digester(buffer_tweets, bpargs)
-                print(
+                digester(buffer_tweets)
+                _log_.info(
                     f'Total tweets:{str(total)}, this time tweets: {str(len(buffer_tweets))}.\n Total items: {str(bufferall)},this time items: {str(bufferTotal) }。\n')
                 buffer_tweets = []
                 bufferTotal = 0
         if bufferTotal > 0:
             bufferall += bufferTotal
-            digester(buffer_tweets, bpargs)
-            print(
+            digester(buffer_tweets)
+            _log_.info(
                 f'Total tweets: {str(total)}, this time tweets: {str(len(buffer_tweets))}.\n Total items: {str(bufferall)} , this time items:{str(bufferTotal)} .\n')
             buffer_tweets = []
             buffer_tweets = []
