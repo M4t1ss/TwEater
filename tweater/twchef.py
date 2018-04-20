@@ -12,6 +12,8 @@ _log_ = logging.getLogger()
 
 
 class TwChef:
+
+
     @staticmethod
     def cookPage(page, session, isComment=False):
         """
@@ -37,6 +39,7 @@ class TwChef:
             time.sleep(4)
         cursor = page['min_position']
         tweets = PyQuery(page['items_html'])('div.js-stream-tweet')
+
         if len(tweets) == 0:
             return cnt_cp, has_more, cursor, items
         for tweetArea in tweets:
@@ -57,6 +60,8 @@ class TwChef:
         cnt_c = 0
         twe = {}
         twe["user"] = tweetq.attr("data-screen-name")
+        twe["reference_source"] = tweetq('div.js-macaw-cards-iframe-container').attr('data-card-url')
+        # print(f'引用：{twe["reference_source"]} ')
 
         # Process attributes of a tweet div
         twe["replies"] = int(tweetq("span.ProfileTweet-action--reply span.ProfileTweet-actionCount").attr(
@@ -152,3 +157,15 @@ class TwChef:
             cnt_c += cnt_cp
         # cnt_c should be 0
         return cnt_c, comments
+
+    @staticmethod
+    def get_rff(page):
+        urls = list()
+        if 'items_html' in page and len(page['items_html'].strip()) == 0:
+            return urls
+        has_more = page['items_html']
+        if has_more is False:
+            return urls
+        for div in PyQuery(page['items_html'])('div.js-macaw-cards-iframe-container').items():
+            urls.append(div.attr('data-card-url'))
+        return urls

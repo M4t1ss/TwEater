@@ -14,7 +14,6 @@ class TwEater:
     @staticmethod
     def eatTweets(digester):
         """
-
         :param digester: 保存回调方法
         :param bpargs: 保存回调参数
         :return:
@@ -39,6 +38,7 @@ class TwEater:
             if not page:
                 continue
             cnt_c, has_more, cursor, page_tweets = TwChef.cookPage(page, isComment=False, session=sess)
+
             if len(page_tweets) == 0:
                 cnt_blank += 1
             if len(page_tweets) > 0:

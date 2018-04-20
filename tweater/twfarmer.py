@@ -18,6 +18,7 @@ class TwFarmer:
         :return:
         """
         url = "https://twitter.com/i/search/timeline?f=tweets&q=%s&src=typd&l=en&max_position=%s"
+
         parUrl = ''
         if 'user' not in order.conf and 'query' not in order.conf:
             raise ValueError("User and Query, at least one of them must be specified.")
@@ -35,6 +36,7 @@ class TwFarmer:
                     parUrl += " near:\"" + order.conf['near'] + "\" within:" + order.conf['within']
         url = url % (parUrl, cursor)
 
+        _log_.debug(f'爬取url => {url}')
         headers = {
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/603.3.8 (KHTML, like Gecko) Version/10.1.2 Safari/603.3.8',
             'Accept-Language': "en-US,en;q=0.8",

@@ -10,8 +10,8 @@ import requests
 
 from sql_db import DBSession, TwitterMessage
 
+end_point = '**************'
 _log_ = logging.getLogger()
-end_point = '*************************'
 
 session = requests.session()
 
@@ -27,6 +27,24 @@ def get_data(json_data, retries=3):
             retries -= 1
 
 
+def get_content_transfer(source_text):
+    post_data = \
+        {
+            "qs": [source_text],
+            "source": "en",
+            "target": "zh",
+            "domain": "technology"  # ,
+            # "no_cache": 1
+        }
+    result_json = get_data(post_data)
+    for r in range(3):
+        _log_.info('-' * 100)
+    values = set(map(lambda x: x['paragraph'], result_json))
+    order_list = [[y['translated_text'] for y in result_json if y['paragraph'] == x] for x in values]
+    transfer_text = [''.join(x) for x in order_list]
+    return transfer_text[-1]
+
+
 def get_transfer(tweets):
     _log_.info(f'获取翻译 {len(tweets)} 条')
     source_text = [x['text'] for x in tweets]
@@ -35,8 +53,8 @@ def get_transfer(tweets):
             "qs": source_text,
             "source": "en",
             "target": "zh",
-            "domain": "technology"#,
-            #"no_cache": 1
+            "domain": "technology"  # ,
+            # "no_cache": 1
         }
     result_json = get_data(post_data)
 

@@ -46,9 +46,8 @@ def save_to_mysql(tweets):
         model = get_twitter_message(tweet)
         if model:
             session.merge(model)
+            session.commit()
             transfer_list.append({'text': model.text, 'id': model.id})
-
-    session.commit()
     session.close()
     _log_.info(f'保存推文 {len(tweets)} 条')
     while threading.active_count() > 100:
