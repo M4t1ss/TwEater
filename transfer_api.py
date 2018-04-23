@@ -10,7 +10,7 @@ import requests
 
 from sql_db import DBSession, TwitterMessage
 
-end_point = '**************'
+end_point = '******'
 _log_ = logging.getLogger()
 
 session = requests.session()

@@ -7,10 +7,11 @@ __date__ = '2018/4/19 15:35'
 import logging
 
 import requests
+from lxml.html import soupparser
 
 from CxExtractor import CxExtractor
 
-end_point = '***************'
+end_point = '****'
 _log_ = logging.getLogger()
 
 session = requests.session()
@@ -21,6 +22,18 @@ headers = {
     'Accept-Language': "en-US,en;q=0.8",
     'X-Requested-With': "XMLHttpRequest"
 }
+
+
+def meta_redirect(content):
+    root = soupparser.fromstring(content)
+    result_url = root.xpath('//meta[@http-equiv="refresh"]/@content')
+    if result_url:
+        result_url = str(result_url[0])
+        urls = result_url.split('URL=') if len(result_url.split('url=')) < 2 else result_url.split('url=')
+        url = urls[1] if len(urls) >= 2 else None
+    else:
+        return None
+    return url
 
 
 def get_data(json_data, retries=3):
@@ -64,10 +77,16 @@ def get_page(url, retries=3):
 
 
 def ana(url):
+    _log_.debug(f'获取引用页面：\n {"*" * 100} \n {url} \n{"*" * 100} \n')
     test_html = get_page(url)
+    # follow the chain of redirects
+    while meta_redirect(test_html):
+        _log_.debug(f'加载meta：\n {"*" * 100} \n {test_html} \n{"*" * 100} \n')
+        test_html = get_page(meta_redirect(test_html))
+
+    _log_.debug(f'获取引用页面：\n {"*" * 100} \n {test_html} \n{"*" * 100} \n')
     if not test_html or test_html.strip() == '':
         return None, None
-
     test_html = test_html.replace('div > div.group > p:first-child">', '')
     content = cx.filter_tags(test_html)
     s = cx.getText(content)

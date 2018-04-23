@@ -16,7 +16,7 @@ BaseModel = declarative_base()
 
 
 class TwitterMessage(BaseModel):
-    __tablename__ = 'twitter_message_ref'
+    __tablename__ = 'twitter_message_ref_2'
     id = Column(String(30), primary_key=True)
     user = Column(String(100))
     replies = Column(Integer)
@@ -27,6 +27,7 @@ class TwitterMessage(BaseModel):
     textUrl = Column(String(500))
     text = Column(String(4096))
     text_transfer = Column(String(4096))
+    reference_url = Column(String(500))
     reference_source = Column(TEXT())
     reference_text = Column(TEXT())
 
@@ -72,8 +73,10 @@ def get_twitter_message(tweet):
         message.textUrl = tweet['textUrl']
     if 'reference_source' in tweet:
         # url = tweet["reference_source"]
-        url = tweet["textUrl"]
+        url = tweet["reference_source"]
+
         if url:
+            message.reference_url = url
             source, text = ana(url)
             message.reference_source = source
             message.reference_text = text
