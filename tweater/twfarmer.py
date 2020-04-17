@@ -60,7 +60,10 @@ class TwFarmer:
         }
         try:
             r = sess.get(url, headers=headers)
-            return r.json()
+            if r.status_code == 200:
+                return r.json()
+            else:
+                return {"errors": "403"}
         except requests.exceptions.RequestException as e:
             _log_.error(f'url: {url}')
             _log_.error(e)
