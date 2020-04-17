@@ -61,17 +61,22 @@ class TwChef:
         twe = {}
         twe["user"] = tweetq.attr("data-screen-name")
         twe["reference_source"] = tweetq('div.js-macaw-cards-iframe-container').attr('data-card-url')
-        # print(f'引用：{twe["reference_source"]} ')
+        
+        repcount = tweetq("span.ProfileTweet-action--reply span.ProfileTweet-actionCount").attr("data-tweet-stat-count")
+        retcount = tweetq("span.ProfileTweet-action--retweet span.ProfileTweet-actionCount").attr("data-tweet-stat-count")
+        favcount = tweetq("span.ProfileTweet-action--favorite span.ProfileTweet-actionCount").attr("data-tweet-stat-count")
+        dtime = tweetq("small.time span.js-short-timestamp").attr("data-time")
 
         # Process attributes of a tweet div
-        twe["replies"] = int(tweetq("span.ProfileTweet-action--reply span.ProfileTweet-actionCount").attr(
-            "data-tweet-stat-count").replace(",", ""))
-        twe["retweets"] = int(tweetq("span.ProfileTweet-action--retweet span.ProfileTweet-actionCount").attr(
-            "data-tweet-stat-count").replace(",", ""))
-        twe["favorites"] = int(tweetq("span.ProfileTweet-action--favorite span.ProfileTweet-actionCount").attr(
-            "data-tweet-stat-count").replace(",", ""))
-        twe['timestamp'] = int(tweetq("small.time span.js-short-timestamp").attr("data-time"))
-        twe["date"] = datetime.fromtimestamp(twe['timestamp']).strftime("%Y-%m-%d %H:%M")
+        if isinstance(repcount, str):
+            twe["replies"] = int(repcount.replace(",", ""))
+        if isinstance(retcount, str):
+            twe["retweets"] = int(retcount.replace(",", ""))
+        if isinstance(favcount, str):
+            twe["favorites"] = int(favcount.replace(",", ""))
+        if isinstance(dtime, str):
+            twe['timestamp'] = int(dtime)
+            twe["date"] = datetime.fromtimestamp(twe['timestamp']).strftime("%Y-%m-%d %H:%M")
         twe["id"] = tweetq.attr("data-tweet-id")
         twe["permalink"] = "https://twitter.com" + tweetq.attr("data-permalink-path")
 
