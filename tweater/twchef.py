@@ -146,6 +146,9 @@ class TwChef:
             lim = cnt_replies
         while has_more is True and total < lim:
             page = TwFarmer.ripCommentPage(user_name, tweet_id, cursor, session)
+            if 'errors' in page or 'message' in page:
+                _log_.info('User does not exist!')
+                break
             if not page:
                 continue
             cnt_cp, has_more, cursor, pageTweets = TwChef.cookPage(page, session, isComment=True)
