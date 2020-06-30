@@ -23,6 +23,10 @@ class TwChef:
         :param isComment:
         :return:
         """
+        
+        print()
+        print(page)
+        print()
 
         cursor = ''
         items = []
@@ -165,6 +169,18 @@ class TwChef:
             cnt_c += cnt_cp
         # cnt_c should be 0
         return cnt_c, comments
+
+    @staticmethod
+    def getTweet(tweet_id, session):
+        cursor = ''
+        has_more = True
+        comments = []
+        page = TwFarmer.ripTweetPage(tweet_id, cursor, session)
+        if 'errors' in page or 'message' in page:
+            _log_.info('User does not exist!')
+        if not page:
+            _log_.info('Something went wrong!')
+        return page
 
     @staticmethod
     def get_rff(page):

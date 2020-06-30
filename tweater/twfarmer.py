@@ -4,6 +4,7 @@ import logging
 import requests
 
 from .tworder import TwOrder as order
+from pyquery import PyQuery
 
 _log_ = logging.getLogger()
 
@@ -64,6 +65,29 @@ class TwFarmer:
                 return r.json()
             else:
                 return {"errors": "403"}
+        except requests.exceptions.RequestException as e:
+            _log_.error(f'url: {url}')
+            _log_.error(e)
+
+    @staticmethod
+    def ripTweetPage(tweet_id, cursor, sess):
+        url = "https://twitter.com/i/web/status/%s?include_available_features=1&include_entities=1&max_position=%s&reset_error_state=false"
+        url = url % (tweet_id, cursor)
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/603.3.8 (KHTML, like Gecko) Version/10.1.2 Safari/603.3.8',
+            'Accept-Language': "en-US,en;q=0.8",
+            'X-Requested-With': "XMLHttpRequest"
+        }
+        try:
+            r = sess.get(url, headers=headers)
+            if r.status_code == 200:
+                itt = PyQuery(r.text)('div.js-tweet-text-container').items()
+                outputs = []
+                for my_div in itt:
+                    outputs.append(my_div("p").text())
+                return outputs[0]
+            else:
+                return False
         except requests.exceptions.RequestException as e:
             _log_.error(f'url: {url}')
             _log_.error(e)
