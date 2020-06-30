@@ -4,10 +4,11 @@ import os
 import threading
 import time
 from datetime import datetime
+import requests
 
 from sql_db import DBSession, get_twitter_message, init_db
 from transfer_api import get_transfer
-from tweater import TwEater, TwOrder
+from tweater import TwEater, TwOrder, TwChef
 
 # from pymongo import MongoClient
 
@@ -70,22 +71,35 @@ if __name__ == "__main__":
 
     # Collect replies of specific tweet_id of a user, username is case-sensitive
     # print tc.TwChef.shopComments('BarackObama', '876456804305252353')
+    sess = requests.Session()
+    
+    # answers = TwChef.shopComments('Oljenjka', '426766378549657600', 20, sess)
+    answers = TwChef.getTweet('781401543560065024', sess)
+    # answers = TwChef.shopComments('Sigita133', '1227663389834596352', 20, sess)
+    print ()
+    print (answers)
+    print ()
+    # print (type(answers))
+
+    # print (answers[1])
+
+
 
     # Write tweets to Mongo Collection
     # connection = MongoClient('localhost', 27017)
     # tdb = connection.tweets
 
     # save with mysql
-    init_db()
+    # init_db()
 
-    with open(f'{basic_path}/twitter_user.txt', 'r') as f:
-        for line in f:
-            name = line.split('/')[-1]
-            if not name:
-                continue
-            name = name.strip()
-            TwOrder.conf['user'] = name
-            TwEater.eatTweets(save_to_mysql)
-            _log_.info(name.strip())
+    # with open(f'{basic_path}/twitter_user.txt', 'r') as f:
+        # for line in f:
+            # name = line.split('/')[-1]
+            # if not name:
+                # continue
+            # name = name.strip()
+            # TwOrder.conf['user'] = name
+            # TwEater.eatTweets(save_to_mysql)
+            # _log_.info(name.strip())
     _log_.info(f" {str(datetime.now())}")
     _log_.info(" Done!")

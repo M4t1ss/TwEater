@@ -24,8 +24,8 @@ if __name__ == "__main__":
     TwOrder.order(f'{basic_path}/order.conf')
     sess = requests.Session()
     
-    inFile = open('needed-q-good-id-allnfxt.json','r')
-    outFile = open("questions-replies.json","w")
+    inFile = open('questions.json','r')
+    outFile = open("questions-replies-1.json","w")
     
     outFile.write("[\n")
     
@@ -56,9 +56,7 @@ if __name__ == "__main__":
                 a_tweet_text = answer['text'].replace('\n', ' ').replace('\\', '\\\\').replace('"', '\\"')
                 outFile.write("{ \"a_tweet_id\": " + a_tweet_id +  ", \"a_screen_name\": \"" + a_screen_name + "\", \"a_tweet_text\": \"" + a_tweet_text + "\" }, ")
             
-            outFile.write("]},\n")
-            # sys.exit("Bomms")
-    
+            outFile.write("]},\n")    
 
     _log_.info(f" {str(datetime.now())}")
     _log_.info(" Done!")
