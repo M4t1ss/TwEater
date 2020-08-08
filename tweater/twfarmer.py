@@ -84,8 +84,12 @@ class TwFarmer:
                 itt = PyQuery(r.text)('div.js-tweet-text-container').items()
                 outputs = []
                 for my_div in itt:
-                    outputs.append(my_div("p").text())
-                return outputs[0]
+                    if "TweetTextSize--jumbo" in my_div("p").attr.class_:
+                        outputs.append(my_div("p")('.TweetTextSize--jumbo').text())
+                if len(outputs) > 0:
+                    return outputs[0]
+                else:
+                    return False
             else:
                 return False
         except requests.exceptions.RequestException as e:
